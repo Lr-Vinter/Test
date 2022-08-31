@@ -3,6 +3,7 @@ package cmdinterpretator
 import (
 	"errors"
 	"testproject/internal/commands"
+	"fmt"
 )
 
 type CommandCallback func(args []string) error
@@ -12,7 +13,6 @@ type CMDInterpretator struct {
 }
 
 func NewCMDInterpetator() *CMDInterpretator {
-	//ci = new(CMDInterpretator{callbacks: make(map[command]CommandCallback), db: db}) ? поч так нельзя
 	ci := &CMDInterpretator{callbacks: make(map[commands.Command]CommandCallback)}
 	return ci
 }
@@ -26,4 +26,10 @@ func (ci *CMDInterpretator) Run(cmd commands.Command, args []string) error {
 		return f(args)
 	}
 	return errors.New("CI : no such command registered")
+}
+
+func (ci *CMDInterpretator) Dump() {
+	for k, v := range ci.callbacks{
+		fmt.Println("cmd", k, "value", v)
+	}
 }
