@@ -20,11 +20,11 @@ func NewController() *CLIController {
 	return c
 }
 
-func (c *CLIController) WriteResponse(answer string) { //
+func (c *CMDInterpretator) WriteResponse(answer string) { //
 	fmt.Println("get result ", answer)
 }
 
-func (c *CLIController) ReceiveAndRunCMD() error {
+func (c *CMDInterpretator) ReceiveAndRunCMD() error {
 	err := c.Inputanalyzer.GetCmdWithArgs(&c.cmd, &c.args)
 	if err != nil {
 		//fmt.Println(err)

@@ -61,22 +61,21 @@ func (ia *InputAnalyzer) parseInput() error {
 	return err
 }
 
-func (ia *InputAnalyzer) GetCmdWithArgs(cmd *commands.Command, args *[]string) error {
+func (ia *InputAnalyzer) GetCmdWithArgs() (commands.Command, []string, error) { ///////
 	err := ia.parseInput()
 	if(err != nil) {
-		return errors.New("Failed to parse")
+		return commands.Exit, []string{}, errors.New("Failed to parse")
 	}
 
 	if value, ok := ia.exprtype[ia.parsedinput[0]]; ok {
-		if len(ia.parsedinput) == len(value.args)+1 { // cmd length = 1
-			*cmd = value.cmd
-			*args = ia.parsedinput[1:]
-			return nil
+		if len(ia.parsedinput) == len(value.args)+1 { 
+			cmd, args := value.cmd, ia.parsedinput[1:]
+			return cmd, args, nil
 		}
-		return errors.New("Wrong arg number...")
+		return commands.Exit, []string{}, errors.New("Wrong arg number...")
 	}
 	
-	return errors.New("Wrong input, command not found...")
+	return commands.Exit, []string{}, errors.New("Wrong input, command not found...")
 }
 
 //func (inputanalyzer *InputAnalyzer) dump() {
