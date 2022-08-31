@@ -10,7 +10,6 @@ import (
 type CLIController struct {
 	Inputanalyzer *inputanalyzer.InputAnalyzer
 
-	answer string // answer from DBController
 	cmd    commands.Command
 	args   []string
 }
@@ -26,17 +25,13 @@ func (c *CLIController) WriteResponse(answer string) { //
 }
 
 func (c *CLIController) ReceiveAndRunCMD() error {
-	var err error
-	err = c.Inputanalyzer.GetCmdWithArgs(&c.cmd, &c.args)
+	err := c.Inputanalyzer.GetCmdWithArgs(&c.cmd, &c.args)
 	if err != nil {
-		fmt.Println(err)
+		//fmt.Println(err)
+		return err
 	}
 
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return err
+	return nil
 }
 
 func (c *CLIController) ReturnCmdAndArgs() (cmd commands.Command, args []string) {

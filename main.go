@@ -14,13 +14,13 @@ func main() {
 	c := clicontroller.NewController()
 
 	s := service.NewService(db, c, i)
-
 	s.RegisterCommands()
 
-	for {
-		c.ReceiveAndRunCMD()
-		cmd, args := c.ReturnCmdAndArgs()
-		i.Run(cmd, args)
-	}
+	s.Execute()
+	//for {
+	//	c.ReceiveAndRunCMD()
+	//	cmd, args := c.ReturnCmdAndArgs()
+	//	i.Run(cmd, args)
+	//}
 
 }

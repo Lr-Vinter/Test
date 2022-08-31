@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"os"
 	"errors"
+	"log"
 )
 
 type DataStorage struct {
@@ -43,10 +44,15 @@ func (d *DataStorage) GetDataByPos(filename string, position int) (string, error
 	d.fi, err = os.OpenFile(filename, os.O_RDONLY, 0444)
 	if err != nil {
 		err = errors.New("DS: failed to open file")
+		log.Fatal(err)
 	}
 
 	d.reader = bufio.NewReader(d.fi)
-	d.reader.Discard(position)
+	_, err = d.reader.Discard(position)
+	if err != nil {
+		err = errors.New("DS: discard method failed")
+		return "", err
+	}
 	data, err := d.reader.ReadBytes(10)
 	if err != nil {
 		err = errors.New("DS: failed to read data from file")
@@ -60,6 +66,7 @@ func (d *DataStorage) WriteData(filename string, data string) error {
 	d.fi, err = os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		err = errors.New("DS: failed to open file")
+		return err
 	}
 
 	d.writer = bufio.NewWriter(d.fi)

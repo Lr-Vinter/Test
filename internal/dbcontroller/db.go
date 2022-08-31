@@ -40,9 +40,7 @@ func (db *DBController) Close(args []string) error {
 
 func (db *DBController) RetrieveData(args []string) (string, error) {
 	if len(args) != 1 {
-		errstr := "DB : wrong arguments number for retrieve data func"
-		err := errors.New(errstr)
-		return errstr, err
+		return "", errors.New("DB : wrong arguments number for retrieve data func")
 	}
 
 	key := args[0]

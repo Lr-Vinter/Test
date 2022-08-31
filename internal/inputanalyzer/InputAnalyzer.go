@@ -16,7 +16,6 @@ type ExprStruct struct {
 
 type InputAnalyzer struct {
 	reader *bufio.Reader
-	input  string
 
 	exprtype    map[string]ExprStruct
 	parsedinput []string
@@ -38,15 +37,17 @@ func (ia *InputAnalyzer) specifyExprStruct() {
 	ia.exprtype["exit"] = ExprStruct{commands.Exit, []string{}}
 }
 
-func (ia *InputAnalyzer) getInput() error {
-	err := errors.New("Failed to read string")
-	ia.input, err = ia.reader.ReadString(10)
-	return err
+func (ia *InputAnalyzer) getInput() (string, error) { 
+	input, err := ia.reader.ReadString(10)
+	if(err != nil){
+		return "", errors.New("IA: Failed to read input string")
+	}
+	return input, nil
 }
 
 func (ia *InputAnalyzer) parseInput() error {
-	err := ia.getInput()
-	buff := strings.TrimRight(ia.input, "\r\n")
+	input, err := ia.getInput()
+	buff := strings.TrimRight(input, "\r\n")
 	ia.parsedinput = strings.Split(buff, " ")
 
 	for i := 0; i < len(ia.parsedinput); i++ {
@@ -62,20 +63,23 @@ func (ia *InputAnalyzer) parseInput() error {
 
 func (ia *InputAnalyzer) GetCmdWithArgs(cmd *commands.Command, args *[]string) error {
 	err := ia.parseInput()
+	if(err != nil) {
+		return errors.New("Failed to parse")
+	}
+
 	if value, ok := ia.exprtype[ia.parsedinput[0]]; ok {
 		if len(ia.parsedinput) == len(value.args)+1 { // cmd length = 1
 			*cmd = value.cmd
 			*args = ia.parsedinput[1:]
 			return nil
 		}
-		err = errors.New("Wrong arg number...")
-		return err
+		return errors.New("Wrong arg number...")
 	}
-	err = errors.New("Wrong input, command not found...")
-	return err
+	
+	return errors.New("Wrong input, command not found...")
 }
 
-func (inputanalyzer *InputAnalyzer) dump() {
-	fmt.Println("input", inputanalyzer.input)
-	fmt.Printf("parsed input %q\n", inputanalyzer.parsedinput)
-}
+//func (inputanalyzer *InputAnalyzer) dump() {
+//	fmt.Println("input", inputanalyzer.input)
+//	fmt.Printf("parsed input %q\n", inputanalyzer.parsedinput)
+//}

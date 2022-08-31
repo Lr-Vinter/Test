@@ -22,10 +22,24 @@ func NewService(db *dbcontroller.DBController, clicontroller *clicontroller.CLIC
 	}
 }
 
+func (s *Service) Execute() {
+	for {
+		err := s.clicontroller.ReceiveAndRunCMD()
+		if(err != nil) {
+			fmt.Println(err)
+		}
+
+		cmd, args := s.clicontroller.ReturnCmdAndArgs()
+		err = s.interpretator.Run(cmd, args)
+		if(err != nil) {
+			fmt.Println(err)
+		}
+	}
+}
+
 func (s *Service) SetCMD(args []string) error {
 	err := s.db.AddData(args)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
@@ -36,7 +50,6 @@ func (s *Service) SetCMD(args []string) error {
 func (s *Service) GetCMD(args []string) error {
 	answer, err := s.db.RetrieveData(args)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
@@ -47,7 +60,6 @@ func (s *Service) GetCMD(args []string) error {
 func (s *Service) ExitCMD(args []string) error {
 	err := s.db.Close(args)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
@@ -55,9 +67,8 @@ func (s *Service) ExitCMD(args []string) error {
 	return nil
 }
 
-func (s *Service) RegisterCommands() error { //
+func (s *Service) RegisterCommands() { //
 	s.interpretator.SendCommandDescription(commands.Set, s.SetCMD)
 	s.interpretator.SendCommandDescription(commands.Get, s.GetCMD)
 	s.interpretator.SendCommandDescription(commands.Exit, s.ExitCMD)
-	return nil
 }
