@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"testproject/internal/cli"
 	"testproject/internal/dbcontroller"
@@ -16,7 +17,10 @@ func main() {
 
 	service := service.NewService(db, i)
 	service.RegisterCommands()
-
-	i.Execute()
-
+	for {
+		err := i.Execute()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 }

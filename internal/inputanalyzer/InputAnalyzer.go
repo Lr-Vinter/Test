@@ -37,16 +37,12 @@ func (ia *InputAnalyzer) specifyExprStruct() {
 	ia.exprtype["exit"] = ExprStruct{commands.Exit, []string{}}
 }
 
-func (ia *InputAnalyzer) getInput() (string, error) {
+func (ia *InputAnalyzer) parseInput() error {
 	input, err := ia.reader.ReadString(10)
 	if err != nil {
-		return "", errors.New("IA: Failed to read input string")
+		return errors.New("IA: Failed to read input string")
 	}
-	return input, nil
-}
 
-func (ia *InputAnalyzer) parseInput() error {
-	input, err := ia.getInput()
 	buff := strings.TrimRight(input, "\r\n")
 	ia.parsedinput = strings.Split(buff, " ")
 
@@ -57,7 +53,7 @@ func (ia *InputAnalyzer) parseInput() error {
 			i--
 		}
 	}
-
+	fmt.Println("here OK")
 	return err
 }
 

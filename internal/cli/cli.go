@@ -28,13 +28,12 @@ func NewCLIController(InputAnalyzer parser) *CLIcontroller {
 }
 
 func (ci *CLIcontroller) Execute() error {
-
 	cmd, args, err := ci.Inputanalyzer.GetCmdWithArgs()
 	if err != nil {
 		return err
 	}
 
-	err = ci.Run(cmd, args)
+	err = ci.run(cmd, args)
 	if err != nil {
 		return err
 	}
@@ -47,7 +46,7 @@ func (ci *CLIcontroller) SendCommandDescription(cmd commands.Command, f CommandC
 	ci.callbacks[cmd] = f
 }
 
-func (ci *CLIcontroller) Run(cmd commands.Command, args []string) error {
+func (ci *CLIcontroller) run(cmd commands.Command, args []string) error {
 	if f, ok := ci.callbacks[cmd]; ok {
 		return f(args)
 	}

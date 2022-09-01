@@ -2,6 +2,7 @@ package service
 
 import (
 	"testproject/internal/dbcontroller"
+
 	//"testproject/internal/clicontroller"
 	"testproject/internal/cli"
 	"testproject/internal/commands"
@@ -29,17 +30,18 @@ func (s *Service) setCMD(args []string) error {
 	return nil
 }
 
-func (s *Service) GetCMD(args []string) error {
+func (s *Service) getCMD(args []string) error {
 	answer, err := s.db.RetrieveData(args)
 	if err != nil {
 		return err
 	}
 
+	//fmt.Println("value", answer)
 	s.interpretator.WriteResponse(answer)
 	return nil
 }
 
-func (s *Service) ExitCMD(args []string) error {
+func (s *Service) exitCMD(args []string) error {
 	err := s.db.Close(args)
 	if err != nil {
 		return err
@@ -51,6 +53,6 @@ func (s *Service) ExitCMD(args []string) error {
 
 func (s *Service) RegisterCommands() { //
 	s.interpretator.SendCommandDescription(commands.Set, s.setCMD)
-	s.interpretator.SendCommandDescription(commands.Get, s.GetCMD)
-	s.interpretator.SendCommandDescription(commands.Exit, s.ExitCMD)
+	s.interpretator.SendCommandDescription(commands.Get, s.getCMD)
+	s.interpretator.SendCommandDescription(commands.Exit, s.exitCMD)
 }
