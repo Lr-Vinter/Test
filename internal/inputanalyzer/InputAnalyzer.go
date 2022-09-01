@@ -37,9 +37,9 @@ func (ia *InputAnalyzer) specifyExprStruct() {
 	ia.exprtype["exit"] = ExprStruct{commands.Exit, []string{}}
 }
 
-func (ia *InputAnalyzer) getInput() (string, error) { 
+func (ia *InputAnalyzer) getInput() (string, error) {
 	input, err := ia.reader.ReadString(10)
-	if(err != nil){
+	if err != nil {
 		return "", errors.New("IA: Failed to read input string")
 	}
 	return input, nil
@@ -63,18 +63,18 @@ func (ia *InputAnalyzer) parseInput() error {
 
 func (ia *InputAnalyzer) GetCmdWithArgs() (commands.Command, []string, error) { ///////
 	err := ia.parseInput()
-	if(err != nil) {
+	if err != nil {
 		return commands.Exit, []string{}, errors.New("Failed to parse")
 	}
 
 	if value, ok := ia.exprtype[ia.parsedinput[0]]; ok {
-		if len(ia.parsedinput) == len(value.args)+1 { 
+		if len(ia.parsedinput) == len(value.args)+1 {
 			cmd, args := value.cmd, ia.parsedinput[1:]
 			return cmd, args, nil
 		}
 		return commands.Exit, []string{}, errors.New("Wrong arg number...")
 	}
-	
+
 	return commands.Exit, []string{}, errors.New("Wrong input, command not found...")
 }
 

@@ -1,19 +1,21 @@
 package main
 
 import (
-	"testproject/internal/cmdinterpretator"
+	"os"
+	"testproject/internal/cli"
 	"testproject/internal/dbcontroller"
-	//"testproject/internal/clicontroller"
+	"testproject/internal/inputanalyzer"
 	"testproject/internal/service"
 )
 
 func main() {
 
-	db := dbcontroller.NewDBController() // 
-	i:= cmdinterpretator.NewCMDInterpetator() //
+	ia := inputanalyzer.NewInputAnalyzer(os.Stdin, 100)
+	db := dbcontroller.NewDBController() //
+	i := cli.NewCLIController(ia)        //
 
-	s := service.NewService(db, i)
-	s.RegisterCommands()
+	service := service.NewService(db, i)
+	service.RegisterCommands()
 
 	i.Execute()
 

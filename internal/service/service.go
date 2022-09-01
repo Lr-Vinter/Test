@@ -3,16 +3,16 @@ package service
 import (
 	"testproject/internal/dbcontroller"
 	//"testproject/internal/clicontroller"
-	"testproject/internal/cmdinterpretator"
+	"testproject/internal/cli"
 	"testproject/internal/commands"
 )
 
 type Service struct {
 	db            *dbcontroller.DBController
-	interpretator *cmdinterpretator.CMDInterpretator
+	interpretator *cli.CLIcontroller
 }
 
-func NewService(db *dbcontroller.DBController, interpretator *cmdinterpretator.CMDInterpretator) *Service {
+func NewService(db *dbcontroller.DBController, interpretator *cli.CLIcontroller) *Service {
 	return &Service{
 		db:            db,
 		interpretator: interpretator,
