@@ -53,14 +53,17 @@ func (ia *InputAnalyzer) parseInput() error {
 			i--
 		}
 	}
-	fmt.Println("here OK")
-	return err
+
+	if len(ia.parsedinput) == 0 {
+		return errors.New("IA: Zero line")
+	}
+	return nil
 }
 
 func (ia *InputAnalyzer) GetCmdWithArgs() (commands.Command, []string, error) { ///////
 	err := ia.parseInput()
 	if err != nil {
-		return commands.Exit, []string{}, errors.New("Failed to parse")
+		return commands.Exit, []string{}, err
 	}
 
 	if value, ok := ia.exprtype[ia.parsedinput[0]]; ok {

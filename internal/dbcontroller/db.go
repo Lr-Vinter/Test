@@ -1,15 +1,15 @@
 package dbcontroller
 
 import (
-	"testproject/internal/datastorage"
-	"testproject/internal/index"
 	"errors"
 	"strings"
+	"testproject/internal/datastorage"
+	"testproject/internal/index"
 )
 
 type DBController struct {
-	datastorage   *datastorage.DataStorage
-	index         *index.Index
+	datastorage *datastorage.DataStorage
+	index       *index.Index
 }
 
 func NewDBController() *DBController {
@@ -44,12 +44,13 @@ func (db *DBController) RetrieveData(args []string) (string, error) {
 	}
 
 	key := args[0]
-	position := db.index.Indexmap[key]
-
-	answer, err := db.datastorage.GetDataByPos("data.txt", position)
-	if err != nil {
-		err = errors.New("DB : failed to load data")
+	if position, ok := db.index.Indexmap[key]; ok {
+		answer, err := db.datastorage.GetDataByPos("data.txt", position)
+		if err != nil {
+			err = errors.New("DB : failed to load data")
+		}
+		return answer, err
 	}
-	
-	return answer, err
+
+	return "", errors.New("Wrong key")
 }
