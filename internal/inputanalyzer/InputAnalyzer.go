@@ -16,7 +16,6 @@ type ExprStruct struct {
 
 type InputAnalyzer struct {
 	reader *bufio.Reader
-	input  string
 
 	exprtype    map[string]ExprStruct
 	parsedinput []string
@@ -26,27 +25,25 @@ func NewInputAnalyzer(input *os.File, size int) *InputAnalyzer {
 	ia := new(InputAnalyzer)
 	ia.reader = bufio.NewReaderSize(input, 100)
 	ia.exprtype = make(map[string]ExprStruct)
-	ia.SpecifyExprStruct()
+	ia.specifyExprStruct()
 
 	fmt.Println("New analyzer")
 	return ia
 }
 
-func (ia *InputAnalyzer) SpecifyExprStruct() {
+func (ia *InputAnalyzer) specifyExprStruct() {
 	ia.exprtype["set"] = ExprStruct{commands.Set, []string{"a", "100"}}
 	ia.exprtype["get"] = ExprStruct{commands.Get, []string{"a"}}
 	ia.exprtype["exit"] = ExprStruct{commands.Exit, []string{}}
 }
 
-func (ia *InputAnalyzer) GetInput() error {
-	err := errors.New("Failed to read string")
-	ia.input, err = ia.reader.ReadString(10)
-	return err
-}
+func (ia *InputAnalyzer) parseInput() error {
+	input, err := ia.reader.ReadString(10)
+	if err != nil {
+		return errors.New("IA: Failed to read input string")
+	}
 
-func (ia *InputAnalyzer) ParseInput() error {
-	err := ia.GetInput()
-	buff := strings.TrimRight(ia.input, "\r\n")
+	buff := strings.TrimRight(input, "\r\n")
 	ia.parsedinput = strings.Split(buff, " ")
 
 	for i := 0; i < len(ia.parsedinput); i++ {
@@ -57,24 +54,30 @@ func (ia *InputAnalyzer) ParseInput() error {
 		}
 	}
 
-	return err
-}
-
-func (ia *InputAnalyzer) GetCmdWithArgs(cmd *commands.Command, args *[]string) error {
-	if value, ok := ia.exprtype[ia.parsedinput[0]]; ok {
-		if len(ia.parsedinput) == len(value.args)+1 { // cmd length = 1
-			*cmd = value.cmd
-			*args = ia.parsedinput[1:]
-			return nil
-		}
-		err := errors.New("Wrong arg number...")
-		return err
+	if len(ia.parsedinput) == 0 {
+		return errors.New("IA: Zero line")
 	}
-	err := errors.New("Wrong input, command not found...")
-	return err
+	return nil
 }
 
-func (inputanalyzer *InputAnalyzer) Dump() {
-	fmt.Println("input", inputanalyzer.input)
-	fmt.Printf("parsed input %q\n", inputanalyzer.parsedinput)
+func (ia *InputAnalyzer) GetCmdWithArgs() (commands.Command, []string, error) { ///////
+	err := ia.parseInput()
+	if err != nil {
+		return commands.Exit, []string{}, err
+	}
+
+	if value, ok := ia.exprtype[ia.parsedinput[0]]; ok {
+		if len(ia.parsedinput) == len(value.args)+1 {
+			cmd, args := value.cmd, ia.parsedinput[1:]
+			return cmd, args, nil
+		}
+		return commands.Exit, []string{}, errors.New("Wrong arg number...")
+	}
+
+	return commands.Exit, []string{}, errors.New("Wrong input, command not found...")
 }
+
+//func (inputanalyzer *InputAnalyzer) dump() {
+//	fmt.Println("input", inputanalyzer.input)
+//	fmt.Printf("parsed input %q\n", inputanalyzer.parsedinput)
+//}

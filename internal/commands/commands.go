@@ -5,5 +5,5 @@ type Command string
 const (
 	Set  Command = "set"
 	Get  Command = "get"
-	Exit Command = "xit"
+	Exit Command = "exit"
 )
